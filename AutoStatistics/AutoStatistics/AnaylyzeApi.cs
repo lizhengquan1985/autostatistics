@@ -1,10 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,17 +11,17 @@ namespace AutoStatistics
         private const string domain = "api.huobi.pro/market";// "be.huobi.com";
         private string baseUrl = $"https://{domain}";
 
-        public ResponseKline kline(string symbol, string period, int size = 300)
-        {
-            var url = $"{baseUrl}/history/kline";
-            url += $"?symbol={symbol}&period={period}&size={size}";
+        //public ResponseKline kline(string symbol, string period, int size = 300)
+        //{
+        //    var url = $"{baseUrl}/history/kline";
+        //    url += $"?symbol={symbol}&period={period}&size={size}";
 
-            int httpCode = 0;
-            var result = RequestDataSync(url, "GET", null, null, out httpCode);
-            //Console.WriteLine(result);
-            Console.WriteLine(httpCode);
-            return JsonConvert.DeserializeObject<ResponseKline>(result);
-        }
+        //    int httpCode = 0;
+        //    var result = RequestDataSync(url, "GET", null, null, out httpCode);
+        //    //Console.WriteLine(result);
+        //    Console.WriteLine(httpCode);
+        //    return JsonConvert.DeserializeObject<ResponseKline>(result);
+        //}
 
         private string RequestDataSync(string url, string method, Dictionary<string, object> param, WebHeaderCollection headers, out int httpCode)
         {
