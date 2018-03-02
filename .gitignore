@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/AutoStatistics/.vs/AutoStatistics/v15
+/AutoStatistics/AutoStatistics/bin/Debug/netcoreapp2.0
+/AutoStatistics/AutoStatistics/obj
