@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using SharpDapper;
+using SharpDapper.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
