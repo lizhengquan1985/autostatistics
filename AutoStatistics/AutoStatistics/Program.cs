@@ -10,6 +10,9 @@ namespace AutoStatistics
     {
         static void Main(string[] args)
         {
+            SpotStatisticsBiz.Statistics();
+
+            Console.ReadLine();
         }
     }
 }
