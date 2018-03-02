@@ -10,6 +10,8 @@ namespace AutoStatistics
     {
         static void Main(string[] args)
         {
+            Console.WriteLine(new AnaylyzeApi().Merged("eosusdt"));
+
             SpotStatisticsBiz.Statistics();
 
             Console.ReadLine();

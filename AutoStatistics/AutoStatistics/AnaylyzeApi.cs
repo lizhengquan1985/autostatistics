@@ -10,22 +10,33 @@ using System.Threading.Tasks;
 
 namespace AutoStatistics
 {
+    public class ResponseMerged
+    {
+        public string status { get; set; }
+        public TickData tick { get; set; }
+    }
+
+    public class TickData
+    {
+        public decimal close { get; set; }
+    }
+
     public class AnaylyzeApi
     {
         private const string domain = "api.huobi.pro/market";// "be.huobi.com";
         private string baseUrl = $"https://{domain}";
 
-        //public ResponseKline kline(string symbol, string period, int size = 300)
-        //{
-        //    var url = $"{baseUrl}/history/kline";
-        //    url += $"?symbol={symbol}&period={period}&size={size}";
+        public ResponseMerged Merged(string symbol)
+        {
+            var url = $"{baseUrl}/detail/merged";
+            url += $"?symbol={symbol}";
 
-        //    int httpCode = 0;
-        //    var result = RequestDataSync(url, "GET", null, null, out httpCode);
-        //    //Console.WriteLine(result);
-        //    Console.WriteLine(httpCode);
-        //    return JsonConvert.DeserializeObject<ResponseKline>(result);
-        //}
+            int httpCode = 0;
+            var result = RequestDataSync(url, "GET", null, null, out httpCode);
+            //Console.WriteLine(result);
+            //Console.WriteLine(httpCode);
+            return JsonConvert.DeserializeObject<ResponseMerged>(result);
+        }
 
         private string RequestDataSync(string url, string method, Dictionary<string, object> param, WebHeaderCollection headers, out int httpCode)
         {

@@ -23,7 +23,7 @@ namespace AutoStatistics
         public SpotStatistics GetSpotStatistics(string statisticsTime)
         {
             var sql = $"select * from t_spot_statistics where StatisticsTime='{statisticsTime}'";
-            var r = Database.Query(sql).FirstOrDefault();
+            var r = Database.Query<SpotStatistics>(sql).FirstOrDefault();
             return r;
         }
 
@@ -48,7 +48,7 @@ namespace AutoStatistics
     public class SpotStatistics
     {
         public long Id { get; set; }
-        public decimal TLCount { get; set; }
+        public int TLCount { get; set; }
         public decimal TLAmount { get; set; }
         public decimal TLNowAmount { get; set; }
         public decimal TotalSy { get; set; }

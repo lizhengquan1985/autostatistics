@@ -14,71 +14,84 @@ namespace AutoStatistics
         {
             while (true)
             {
-                var dt = DateTime.Now.ToString("yyyyMMddHH");
-                var spotStatisticsItem = new CoinDao().GetSpotStatistics(dt);
-                if (spotStatisticsItem != null)
+                try
                 {
-                    Thread.Sleep(1000 * 60);
-
-                    Console.WriteLine("当前统计 ->  " + JsonConvert.SerializeObject(spotStatisticsItem));
-                    continue;
+                    DoStatistics();
                 }
-
-                // 统计 TLCount TLAmount TLNowAmount TotalSy TotalLoss AllEarning StatisticsTime
-                var spotRecords = new CoinDao().ListAll();
-                Console.WriteLine($"总记录数{spotRecords}");
-                int tlCount = 0;
-                decimal tlAmount = 0;
-                decimal tlNowAmount = 0;
-                decimal totalSy = 0;
-
-                Dictionary<string, decimal> coinCount = new Dictionary<string, decimal>();
-
-                foreach (var spotRecord in spotRecords)
+                catch (Exception ex)
                 {
-                    if (!spotRecord.SellSuccess)
+                    Console.WriteLine(ex.Message, ex);
+                }
+            }
+        }
+
+        public static void DoStatistics()
+        {
+            var dt = DateTime.Now.ToString("yyyy-MM-dd HH");
+            var spotStatisticsItem = new CoinDao().GetSpotStatistics(dt);
+            if (spotStatisticsItem != null)
+            {
+                Thread.Sleep(1000 * 60);
+
+                Console.WriteLine("当前统计 ->  " + JsonConvert.SerializeObject(spotStatisticsItem));
+                return;
+            }
+
+            // 统计 TLCount TLAmount TLNowAmount TotalSy TotalLoss AllEarning StatisticsTime
+            var spotRecords = new CoinDao().ListAll();
+            Console.WriteLine($"总记录数{spotRecords}");
+            int tlCount = 0;
+            decimal tlAmount = 0;
+            decimal tlNowAmount = 0;
+            decimal totalSy = 0;
+
+            Dictionary<string, decimal> coinCount = new Dictionary<string, decimal>();
+
+            foreach (var spotRecord in spotRecords)
+            {
+                if (!spotRecord.SellSuccess)
+                {
+                    tlCount++;
+                    tlAmount += spotRecord.Buytotalquantity * spotRecord.Buytradeprice;
+                    if (coinCount.ContainsKey(spotRecord.Coin))
                     {
-                        tlCount++;
-                        tlAmount += spotRecord.Buytotalquantity * spotRecord.Buytradeprice;
-                        if (coinCount.ContainsKey(spotRecord.Coin))
-                        {
-                            coinCount[spotRecord.Coin] += spotRecord.Buytotalquantity;
-                        }
-                        else
-                        {
-                            coinCount.Add(spotRecord.Coin, spotRecord.Buytotalquantity);
-                        }
+                        coinCount[spotRecord.Coin] += spotRecord.Buytotalquantity;
                     }
                     else
                     {
-                        totalSy += spotRecord.Selltotalquantity * spotRecord.Selltradeprice -
-                                   spotRecord.Buytotalquantity * spotRecord.Buytradeprice;
+                        coinCount.Add(spotRecord.Coin, spotRecord.Buytotalquantity);
                     }
                 }
-
-                foreach (var coin in coinCount.Keys)
+                else
                 {
-                    // 获取当前价位
-
+                    totalSy += spotRecord.Selltotalquantity * spotRecord.Selltradeprice -
+                               spotRecord.Buytotalquantity * spotRecord.Buytradeprice;
                 }
-
-                decimal totalLoss = tlAmount - tlNowAmount;
-                decimal allEarning = totalSy - totalLoss;
-
-                new CoinDao().CreateSpotStatistics(new SpotStatistics()
-                {
-                    CreateTime = DateTime.Now,
-                    StatisticsTime = dt,
-
-                    TLCount = tlCount,
-                    TLAmount = tlAmount,
-                    TLNowAmount = tlNowAmount,
-                    TotalSy = totalSy,
-
-                    TotalLoss = totalLoss,
-                    AllEarning = allEarning
-                });
             }
+
+            foreach (var coin in coinCount.Keys)
+            {
+                // 获取当前价位
+                var res = new AnaylyzeApi().Merged(coin + "usdt");
+                tlNowAmount += res.tick.close * coinCount[coin];
+            }
+
+            decimal totalLoss = tlAmount - tlNowAmount;
+            decimal allEarning = totalSy - totalLoss;
+
+            new CoinDao().CreateSpotStatistics(new SpotStatistics()
+            {
+                CreateTime = DateTime.Now,
+                StatisticsTime = dt,
+
+                TLCount = tlCount,
+                TLAmount = tlAmount,
+                TLNowAmount = tlNowAmount,
+                TotalSy = totalSy,
+
+                TotalLoss = totalLoss,
+                AllEarning = allEarning
+            });
         }
     }
 }
