@@ -23,7 +23,7 @@ namespace AutoStatistics
 
     public class AnaylyzeApi
     {
-        private const string domain = "api.huobi.pro/market";// "be.huobi.com";
+        private const string domain = "api.huobipro.com/market";// "be.huobi.com";
         private string baseUrl = $"https://{domain}";
 
         public ResponseMerged Merged(string symbol)

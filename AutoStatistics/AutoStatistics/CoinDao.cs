@@ -55,6 +55,7 @@ namespace AutoStatistics
         public decimal TotalLoss { get; set; }
         public decimal AllEarning { get; set; }
         public string StatisticsTime { get; set; }
+        public decimal OtherSy { get; set; }
         public DateTime CreateTime { get; set; }
     }
 
@@ -67,6 +68,8 @@ namespace AutoStatistics
         public decimal Buytotalquantity { get; set; }
         public decimal Buytradeprice { get; set; }
         public bool SellSuccess { get; set; }
+        public decimal SellOrderPrice { get; set; }
+        public decimal BuyOrderPrice { get; set; }
 
         //selltradeprice, selltotalquantity, buytradeprice,buytotalquantity, selltradeprice* selltotalquantity-buytradeprice* buytotalquantity
     }

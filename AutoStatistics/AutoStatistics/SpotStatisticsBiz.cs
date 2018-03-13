@@ -46,6 +46,7 @@ namespace AutoStatistics
             decimal totalSy = 0;
 
             Dictionary<string, decimal> coinCount = new Dictionary<string, decimal>();
+            Dictionary<string, decimal> coinOtherCount = new Dictionary<string, decimal>();
 
             foreach (var spotRecord in spotRecords)
             {
@@ -64,8 +65,17 @@ namespace AutoStatistics
                 }
                 else
                 {
-                    totalSy += spotRecord.Selltotalquantity * spotRecord.Selltradeprice -
-                               spotRecord.Buytotalquantity * spotRecord.Buytradeprice;
+                    totalSy += spotRecord.Selltotalquantity * spotRecord.SellOrderPrice -
+                               spotRecord.Buytotalquantity * spotRecord.BuyOrderPrice;
+
+                    if (coinOtherCount.ContainsKey(spotRecord.Coin))
+                    {
+                        coinOtherCount[spotRecord.Coin] += spotRecord.Buytotalquantity - spotRecord.Selltotalquantity;
+                    }
+                    else
+                    {
+                        coinOtherCount.Add(spotRecord.Coin, spotRecord.Buytotalquantity - spotRecord.Selltotalquantity);
+                    }
                 }
             }
 
@@ -74,6 +84,14 @@ namespace AutoStatistics
                 // 获取当前价位
                 var res = new AnaylyzeApi().Merged(coin + "usdt");
                 tlNowAmount += res.tick.close * coinCount[coin];
+            }
+
+            decimal otherSy = 0;
+            foreach (var coin in coinOtherCount.Keys)
+            {
+                // 获取当前价位
+                var res = new AnaylyzeApi().Merged(coin + "usdt");
+                otherSy += res.tick.close * coinOtherCount[coin];
             }
 
             decimal totalLoss = tlAmount - tlNowAmount;
@@ -90,7 +108,8 @@ namespace AutoStatistics
                 TotalSy = totalSy,
 
                 TotalLoss = totalLoss,
-                AllEarning = allEarning
+                AllEarning = allEarning,
+                OtherSy = otherSy
             });
         }
     }
