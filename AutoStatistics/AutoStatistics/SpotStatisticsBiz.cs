@@ -65,8 +65,8 @@ namespace AutoStatistics
                 }
                 else
                 {
-                    totalSy += spotRecord.Selltotalquantity * spotRecord.SellOrderPrice -
-                               spotRecord.Buytotalquantity * spotRecord.BuyOrderPrice;
+                    totalSy += spotRecord.Selltotalquantity * spotRecord.Selltradeprice -
+                               spotRecord.Buytotalquantity * spotRecord.Buytradeprice;
 
                     if (coinOtherCount.ContainsKey(spotRecord.Coin))
                     {
